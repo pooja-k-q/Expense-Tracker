@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Expense Tracker</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f8f8f8; }
+    h1 { text-align: center; }
+    input, button { padding: 10px; margin: 5px 0; width: 100%; font-size: 16px; }
+    ul { list-style: none; padding: 0; }
+    li { background: #eee; margin: 5px 0; padding: 10px; border-radius: 5px; display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <h1>💰 Expense Tracker</h1>
+  <input id="desc" placeholder="Description" required>
+  <input id="amt" type="number" placeholder="Amount (₹)" required>
+  <button onclick="addExpense()">Add</button>
+  
+  <h3>Expenses:</h3>
+  <ul id="list"></ul>
+  <h3>Total: ₹<span id="total">0</span></h3>
+
+  <script>
+    let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+    function updateList() {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+      let total = 0;
+
+      expenses.forEach((exp, i) => {
+        total += +exp.amount;
+        list.innerHTML += `<li>${exp.desc} - ₹${exp.amount} 
+          <button onclick="delExpense(${i})">❌</button></li>`;
+      });
+
+      document.getElementById("total").textContent = total;
+      localStorage.setItem("expenses", JSON.stringify(expenses));
+    }
+
+    function addExpense() {
+      const desc = document.getElementById("desc").value.trim();
+      const amt = document.getElementById("amt").value;
+
+      if (!desc || !amt) return alert("Please fill all fields");
+
+      expenses.push({ desc, amount: amt });
+      document.getElementById("desc").value = "";
+      document.getElementById("amt").value = "";
+      updateList();
+    }
+
+    function delExpense(i) {
+      expenses.splice(i, 1);
+      updateList();
+    }
+
+    updateList();
+  </script>
+</body>
+</html>
